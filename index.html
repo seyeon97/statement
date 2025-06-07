@@ -2,151 +2,112 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>거래명세서</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>포레테 거래명세서</title>
   <style>
-    body {
-      font-family: '나눔고딕', sans-serif;
-      margin: 0;
-      padding: 20px;
-      background: #f5f5f5;
-    }
-    .invoice {
-      background: #fff;
-      padding: 20px;
-      max-width: 900px;
-      margin: auto;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    .invoice table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 20px;
-    }
-    .invoice th,
-    .invoice td {
-      border: 1px solid #000;
-      padding: 8px;
-      text-align: left;
-      vertical-align: middle;
-    }
-    .invoice th {
-      background: #eee;
-    }
-    .invoice .title {
-      text-align: center;
-      font-size: 24px;
-      font-weight: bold;
-    }
-    .buttons {
-      text-align: right;
-    }
-    .buttons button {
-      padding: 8px 16px;
-      margin-left: 8px;
-      font-size: 14px;
-      cursor: pointer;
+    body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f0f2f5; }
+    #tx-form, #tx-output { max-width: 680px; margin: 40px auto; background: #fff; padding: 32px; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.08); color: #000; }
+    h2 { text-align: center; margin-bottom: 24px; font-size: 28px; }
+    label { display: block; margin: 12px 0 8px; font-weight: bold; }
+    input[type="text"], input[type="number"], select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+    button { margin-top: 20px; width: 100%; padding: 14px; background: #01a081; color: #fff; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; }
+    button:hover { background: #017a65; }
+    #tx-output { display: none; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
+    th { background: #f9f9f9; }
+    td:nth-child(2), td:nth-child(3), td:nth-child(4) { text-align: right; }
+    @media print {
+      body > *:not(#tx-output) { display: none !important; }
+      #tx-output { display: block !important; box-shadow: none !important; }
+      button { display: none !important; }
+      @page { margin: 10mm; size: A4 portrait; }
     }
   </style>
 </head>
 <body>
-  <div class="invoice">
-    <!-- 상단 테이블: NO / 제목 -->
+  <form id="tx-form">
+    <h2>포레테 거래명세서</h2>
+    <label for="company">회사명</label>
+    <input type="text" id="company" name="company" required>
+    <label for="class-kind">클래스 종류</label>
+    <select id="class-kind" name="classKind" required>
+      <option value="핸드드립 클래스">핸드드립 클래스</option>
+      <option value="드립백 클래스">드립백 클래스</option>
+    </select>
+    <label for="class-size">클래스 인원</label>
+    <select id="class-size" name="classSize" required>
+      <option value="15인 이하">15인 이하</option>
+      <option value="16~40인">16~40인</option>
+      <option value="41~100인">41~100인</option>
+    </select>
+    <label for="quantity">인원 수</label>
+    <input type="number" id="quantity" name="quantity" min="1" required>
+    <label for="payment-method">결제 방식</label>
+    <select id="payment-method" name="paymentMethod" required>
+      <option value="신용카드 결제">신용카드 결제</option>
+      <option value="전자세금계산서 발행">전자세금계산서 발행</option>
+    </select>
+    <p id="warning" style="color:red; display:none;">⚠ 인원 수가 클래스 유형에 맞지 않습니다.</p>
+    <button type="submit">명세서 보기</button>
+  </form>
+
+  <div id="tx-output">
+    <h2>포레테 거래명세서</h2>
+    <p><strong>명세일자:</strong> <span id="date"></span></p>
+    <p><strong>거래처:</strong> <span id="out-company"></span></p>
+    <hr>
+    <h3>공급자 정보</h3>
+    <p><strong>상호:</strong> 포레테</p>
+    <p><strong>대표자:</strong> 이세연</p>
+    <p><strong>사업자등록번호:</strong> 417-14-07644</p>
+    <p><strong>주소:</strong> 서울시 강동구 성안로 39, 1층 103호</p>
+    <p><strong>이메일:</strong> ceo@poleta3d.com</p>
+    <hr>
     <table>
-      <tr>
-        <th style="width: 100px; text-align: center;">NO.<br>1</th>
-        <th class="title">거래명세서</th>
-      </tr>
+      <thead>
+        <tr><th>항목</th><th>단가(원)</th><th>수량</th><th>금액(원)</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td id="out-item"></td>
+          <td id="out-unit"></td>
+          <td id="out-qty"></td>
+          <td id="out-amount"></td>
+        </tr>
+      </tbody>
     </table>
-
-    <!-- 상세 정보 테이블 -->
-    <table>
-      <tr>
-        <th>등록번호</th>
-        <td>417-14-07644</td>
-        <td rowspan="6" style="text-align:center;">
-          <!-- 여기에 직인 이미지 -->
-          <img 
-            src="leeseeyeon_seal.png" 
-            alt="이세연 직인" 
-            style="max-width: 120px; height: auto;"
-          />
-        </td>
-      </tr>
-      <tr>
-        <th>상호(법인명)</th>
-        <td>포레테 (대표: 이세연)</td>
-      </tr>
-      <tr>
-        <th>사업장주소</th>
-        <td>서울시 강동구 성안로 39, 103호</td>
-      </tr>
-      <tr>
-        <th>업태</th>
-        <td>서비스업</td>
-      </tr>
-      <tr>
-        <th>종목</th>
-        <td>커피클래스</td>
-      </tr>
-      <tr>
-        <th>전화번호</th>
-        <td>010-3028-2705</td>
-      </tr>
-    </table>
-
-    <!-- 날짜 및 수신 -->
-    <p>2025년 6월 7일</p>
-    <p><strong>000 귀하</strong></p>
-
-    <!-- 버튼 -->
-    <div class="buttons">
-      <button id="viewPDF">거래명세서 보기</button>
-      <button id="savePDF">PDF 저장 / 인쇄하기</button>
-    </div>
-  </div>
-
-  <!-- PDF 뷰어 레이어 (초기엔 숨김) -->
-  <div id="pdfLayer" style="
-       display:none;
-       position:fixed; top:0; left:0;
-       width:100%; height:100%;
-       background:rgba(0,0,0,0.8);
-       justify-content:center; align-items:center;
-     ">
-    <iframe
-      id="pdfFrame"
-      style="width:80%; height:90%; border: none; background:#fff;"
-    ></iframe>
-    <button
-      id="closePDF"
-      style="
-        position:absolute; top:20px; right:20px;
-        padding:8px 12px; font-size:14px; cursor:pointer;
-      "
-    >닫기</button>
+    <p style="margin-top:20px;"><strong>총 합계(VAT 포함):</strong> <span id="out-total"></span> 원</p>
+    <p>※ 전자세금계산서 발행 가능</p>
+    <p>※ 당일 현장 카드결제 가능</p>
+    <button onclick="window.print()">인쇄하기</button>
   </div>
 
   <script>
-    // PDF 파일 경로 지정
-    const pdfUrl = 'statement.pdf'; // 실제 PDF 파일명으로 교체
-
-    document.getElementById('viewPDF').addEventListener('click', () => {
-      const layer = document.getElementById('pdfLayer');
-      const frame = document.getElementById('pdfFrame');
-      frame.src = pdfUrl;
-      layer.style.display = 'flex';
-    });
-
-    document.getElementById('closePDF').addEventListener('click', () => {
-      document.getElementById('pdfLayer').style.display = 'none';
-      document.getElementById('pdfFrame').src = '';
-    });
-
-    document.getElementById('savePDF').addEventListener('click', () => {
-      window.open(pdfUrl, '_blank');
+    document.getElementById('tx-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const company = this.company.value;
+      const kind = this.classKind.value;
+      const size = this.classSize.value;
+      const qtyInput = document.getElementById('quantity');
+      const qty = parseInt(qtyInput.value, 10);
+      const warning = document.getElementById('warning');
+      let unit = 0, min=1, max=Infinity;
+      if(size==='15인 이하'){ unit=50000; max=15; }
+      else if(size==='16~40인'){ unit=40000; min=16; max=40; }
+      else if(size==='41~100인'){ unit=30000; min=41; max=100; }
+      if(qty<min||qty>max){ qtyInput.classList.add('invalid'); warning.style.display='block'; return; }
+      qtyInput.classList.remove('invalid'); warning.style.display='none';
+      const amount = unit * qty;
+      document.getElementById('date').textContent = new Date().toISOString().split('T')[0];
+      document.getElementById('out-company').textContent = company;
+      document.getElementById('out-item').textContent = kind + ' ('+size+')';
+      document.getElementById('out-unit').textContent = unit.toLocaleString();
+      document.getElementById('out-qty').textContent = qty;
+      document.getElementById('out-amount').textContent = amount.toLocaleString();
+      document.getElementById('out-total').textContent = amount.toLocaleString();
+      document.getElementById('tx-output').style.display = 'block';
     });
   </script>
 </body>
 </html>
-
