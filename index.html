@@ -1,326 +1,167 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>포레테 거래명세서</title>
-  <style>
-    :root {
-      --main: #009c86;
-      --border: #000;
-      --font: Arial, "맑은 고딸고딕",sans-serif;
-    }
-    * {
-      box-sizing: border-box;
-      font-family: var(--font);
-    }
-    body {
-      margin: 0;
-      padding: 20px;
-      background: #f0f2f5;
-      color: #333;
-      line-height: 1.5;
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+<title>포레테 거래명세서</title>
 
-    /* — 입력 폼 — */
-    #quote-form {
-      max-width: 640px;
-      margin: 40px auto;
-      background: #fff;
-      padding: 32px;
-      border-radius: 12px;
-      /* 테두리와 그림자 모두 제거 */
-      border: none !important;
-      box-shadow: none !important;
-    }
-    #quote-form h2,
-    #quote-form label {
-      color: #000;
-    }
-    #quote-form h2 {
-      font-size: 28px;
-      text-align: center;
-      margin-bottom: 24px;
-    }
-    #quote-form label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: bold;
-    }
-    #quote-form input,
-    #quote-form select {
-      width: 100%;
-      margin-bottom: 16px;
-      padding: 12px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-    }
-    #quote-form button {
-      width: 100%;
-      padding: 14px;
-      background: var(--main);
-      color: #fff;
-      font-weight: bold;
-      border: none;
-      border-radius: 6px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: background .3s;
-    }
-    #quote-form button:hover {
-      background: #007a6b;
-    }
-    #warning-message {
-      display: none;
-      color: #e00;
-      font-size: 14px;
-      margin-bottom: 16px;
-    }
-    @keyframes blink {
-      0% { background: #ffe6e6 }
-      50% { background: #fff }
-      100% { background: #ffe6e6 }
-    }
-    input.invalid {
-      border-color: #e00 !important;
-      animation: blink .4s ease-in-out 3;
-    }
+<style>
+:root{--main:#009c86;--border:#000;--font:Arial,"맑은 고딕",sans-serif;}
+*{box-sizing:border-box;font-family:var(--font);}
+body{margin:0;padding:20px;background:#f0f2f5;color:#333;line-height:1.5;}
 
-    /* — 거래명세서 출력 — */
-    #statement {
-      display: none;
-      max-width: 720px;
-      margin: 40px auto;
-      background: #fff;
-      padding: 24px;
-      border: none !important;
-      box-shadow: none !important;
-      color: #000 !important;
-    }
-    #statement table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 14px;
-      color: #000 !important;
-    }
-    #statement th,
-    #statement td {
-      border: 1px solid var(--border);
-      padding: 6px 4px;
-      text-align: center;
-      color: #000 !important;
-    }
-    #statement .no-cell {
-      width: 60px;
-      font-weight: bold;
-      font-size: 16px;
-      vertical-align: top;
-    }
-    #statement .title-cell {
-      font-size: 24px;
-      font-weight: bold;
-      border-left: none;
-      border-right: none;
-    }
-    #statement .supplier-table td {
-      padding: 4px 6px;
-      text-align: left;
-      font-size: 12px;
-      color: #000 !important;
-    }
-    #statement .money-row td {
-      font-weight: bold;
-      background: #f7f7f7;
-      color: #000 !important;
-    }
-    #statement .items-table th {
-      background: #f7f7f7;
-      color: #000 !important;
-    }
-    #statement .note {
-      text-align: left;
-      font-size: 12px;
-      border: none;
-      padding-top: 8px;
-      color: #000 !important;
-    }
-    .btn-wrap {
-      margin-top: 16px;
-    }
-    .btn-wrap button {
-      width: 100%;
-      padding: 12px;
-      background: var(--main);
-      color: #fff;
-      font-weight: bold;
-      border: none;
-      border-radius: 6px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: background .3s;
-    }
-    .btn-wrap button:hover {
-      background: #007a6b;
-    }
+/* 🔑 ① 아임웹 코드 위젯 외곽선·그림자 제거 */
+.iw_component,               /* 에디터에서 “코드 위젯”이 갖는 클래스 */
+.iw_component *{box-shadow:none!important;border:none!important;}
 
-    /* — 인쇄용 CSS — */
-    @media print {
-      html,
-      body {
-        margin: 0;
-        padding: 0;
-        background: #fff !important;
-        print-color-adjust: exact;
-      }
-      body > *:not(#statement) {
-        display: none !important;
-      }
-      #statement {
-        display: block !important;
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        margin: 0;
-        padding: 0;
-        border: none !important;
-        box-shadow: none !important;
-      }
-      .btn-wrap {
-        display: none !important;
-      }
-      @page {
-        size: A4 portrait;
-        margin: 10mm;
-      }
-    }
-  </style>
+/* ② 입력 폼 카드 */
+#quote-form{
+  max-width:640px;margin:40px auto;background:#fff;padding:32px;border-radius:12px;
+}
+#quote-form h2,#quote-form label{color:#000;}
+#quote-form h2{font-size:28px;text-align:center;margin-bottom:24px;}
+#quote-form label{display:block;margin-bottom:8px;font-weight:bold;}
+#quote-form input,#quote-form select{
+  width:100%;margin-bottom:16px;padding:12px;border:1px solid #ccc;border-radius:6px;
+}
+#quote-form button{
+  width:100%;padding:14px;background:var(--main);color:#fff;font-weight:bold;border:none;
+  border-radius:6px;font-size:16px;cursor:pointer;transition:background .3s;
+}
+#quote-form button:hover{background:#007a6b;}
+#warning-message{display:none;color:#e00;font-size:14px;margin-bottom:16px;}
+@keyframes blink{0%{background:#ffe6e6}50%{background:#fff}100%{background:#ffe6e6}}
+input.invalid{border-color:#e00!important;animation:blink .4s ease-in-out 3}
+
+/* ③ 거래명세서 출력 */
+#statement{
+  display:none;max-width:720px;margin:40px auto;background:#fff;padding:24px;
+  border:none!important;box-shadow:none!important;color:#000!important;
+}
+#statement table{width:100%;border-collapse:collapse;font-size:14px;color:#000!important;}
+#statement th,#statement td{border:1px solid var(--border);padding:6px 4px;text-align:center;color:#000!important;}
+#statement .no-cell{width:60px;font-weight:bold;font-size:16px;vertical-align:top;}
+#statement .title-cell{font-size:24px;font-weight:bold;border-left:none;border-right:none;}
+#statement .supplier-table td{padding:4px 6px;text-align:left;font-size:12px;color:#000!important;}
+#statement .money-row td{font-weight:bold;background:#f7f7f7;color:#000!important;}
+#statement .items-table th{background:#f7f7f7;color:#000!important;}
+.btn-wrap{margin-top:16px;}
+.btn-wrap button{width:100%;padding:12px;background:var(--main);color:#fff;font-weight:bold;border:none;
+  border-radius:6px;font-size:16px;cursor:pointer;transition:background .3s;}
+.btn-wrap button:hover{background:#007a6b;}
+
+/* ④ 인쇄 전용 */
+@media print{
+  html,body{margin:0;padding:0;background:#fff!important;print-color-adjust:exact;}
+  body>*:not(#statement){display:none!important;}
+  #statement{display:block!important;position:absolute;top:0;left:0;width:100%;margin:0;padding:0;}
+  .btn-wrap{display:none!important;}
+  @page{size:A4 portrait;margin:10mm;}
+}
+</style>
 </head>
 <body>
 
-  <!-- 입력 폼 -->
-  <form id="quote-form">
-    <h2>포레테 거래명세서</h2>
+<form id="quote-form">
+  <h2>포레테 거래명세서</h2>
 
-    <label>회사명
-      <input type="text" name="company" required>
-    </label>
+  <label>회사명
+    <input type="text" name="company" required>
+  </label>
 
-    <label>클래스 종류
-      <select name="classKind" required>
-        <option>핸드드립 클래스</option>
-        <option>드립백 클래스</option>
-      </select>
-    </label>
+  <label>클래스 종류
+    <select name="classKind" required>
+      <option>핸드드립 클래스</option>
+      <option>드립백 클래스</option>
+    </select>
+  </label>
 
-    <label>클래스 인원
-      <select name="type" required>
-        <option>15인 이하</option>
-        <option>16~40인</option>
-        <option>41~100인</option>
-      </select>
-    </label>
+  <label>클래스 인원
+    <select name="type" required>
+      <option>15인 이하</option>
+      <option>16~40인</option>
+      <option>41~100인</option>
+    </select>
+  </label>
 
-    <label>인원 수
-      <input type="number" name="quantity" min="1" required>
-    </label>
+  <label>인원 수
+    <input type="number" name="quantity" min="1" required>
+  </label>
 
-    <label>결제 방식
-      <select name="noteType" required>
-        <option value="신용카드 결제건">신용카드 결제건</option>
-        <option value="전자세금계산서 발행">전자세금계산서 발행</option>
-      </select>
-    </label>
+  <label>결제 방식
+    <select name="noteType" required>
+      <option value="신용카드 결제건">신용카드 결제건</option>
+      <option value="전자세금계산서 발행">전자세금계산서 발행</option>
+    </select>
+  </label>
 
-    <p id="warning-message">⚠ 클래스 유형에 맞는 인원 수를 입력해 주세요.</p>
+  <p id="warning-message">⚠ 클래스 유형에 맞는 인원 수를 입력해 주세요.</p>
 
-    <button type="submit">거래명세서 보기</button>
-  </form>
+  <button type="submit">거래명세서 보기</button>
+</form>
 
-  <!-- 거래명세서 영역 -->
-  <div id="statement"></div>
+<div id="statement"></div>
 
-  <script>
-    document.getElementById('quote-form').addEventListener('submit', function(e) {
-      e.preventDefault();
-      const f = e.target;
-      const company = f.company.value.trim();
-      const kind    = f.classKind.value;
-      const type    = f.type.value;
-      const qty     = parseInt(f.quantity.value, 10);
-      const note    = f.noteType.value;
-      const warn    = document.getElementById('warning-message');
+<script>
+document.getElementById('quote-form').addEventListener('submit',function(e){
+  e.preventDefault();
+  const f=e.target;
+  const company=f.company.value.trim();
+  const kind=f.classKind.value;
+  const type=f.type.value;
+  const qty=parseInt(f.quantity.value,10);
+  const note=f.noteType.value;
+  const warn=document.getElementById('warning-message');
 
-      let unit = 0, min = 1, max = Infinity;
-      if (type === '15인 이하')     { unit = 50000; max = 15; }
-      else if (type === '16~40인') { unit = 40000; min = 16; max = 40; }
-      else                         { unit = 30000; min = 41; max = 100; }
+  let unit=0,min=1,max=Infinity;
+  if(type==='15인 이하'){unit=50000;max=15;}
+  else if(type==='16~40인'){unit=40000;min=16;max=40;}
+  else{unit=30000;min=41;max=100;}
 
-      if (qty < min || qty > max) {
-        f.quantity.classList.add('invalid');
-        warn.style.display = 'block';
-        return;
-      } else {
-        f.quantity.classList.remove('invalid');
-        warn.style.display = 'none';
-      }
+  if(qty<min||qty>max){f.quantity.classList.add('invalid');warn.style.display='block';return;}
+  f.quantity.classList.remove('invalid');warn.style.display='none';
 
-      const total = unit * qty;
-      const d = new Date();
-      const dateStr = `${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일`;
+  const total=unit*qty;
+  const d=new Date();
+  const dateStr=`${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일`;
 
-      document.getElementById('statement').innerHTML = `
-        <table style="width:100%;border-collapse:collapse">
-          <tr>
-            <td class="no-cell" rowspan="2">NO.<br>1</td>
-            <td class="title-cell" colspan="5">거 래 명 세 서</td>
-          </tr>
+  document.getElementById('statement').innerHTML=`
+    <table><tr><td class="no-cell" rowspan="2">NO.<br>1</td>
+      <td class="title-cell" colspan="5">거 래 명 세 서</td></tr></table>
+    <table style="margin-top:8px"><tr>
+      <td style="width:50%;border:none;text-align:left;padding:4px 8px;border-bottom:1px solid var(--border);">
+        ${dateStr}<br><br><strong>${company}</strong> 귀하
+      </td>
+      <td style="width:50%;border:none;padding:0;vertical-align:top;">
+        <table class="supplier-table">
+          <tr><td>등록번호</td><td>417-14-07644</td><td rowspan="3" style="text-align:center;width:60px">
+            <img src="https://i.imgur.com/4i4X9qx.png" style="width:46px;height:46px"></td></tr>
+          <tr><td>상호(법인명)</td><td>포레테 (대표: 이세연)</td></tr>
+          <tr><td>사업장주소</td><td>서울시 강동구 성안로 39, 103호</td></tr>
+          <tr><td>업태</td><td>서비스업</td><td rowspan="2"></td></tr>
+          <tr><td>종목</td><td>커피클래스</td></tr>
+          <tr><td>전화번호</td><td>010-3028-2705</td><td></td></tr>
         </table>
-        <table style="width:100%;border-collapse:collapse;margin-top:8px">
-          <tr>
-            <td style="width:50%;border:none;text-align:left;padding:4px 8px;border-bottom:1px solid var(--border);">
-              ${dateStr}<br><br><strong>${company}</strong> 귀하
-            </td>
-            <td style="width:50%;border:none;padding:0;vertical-align:top;">
-              <table class="supplier-table">
-                <tr><td>등록번호</td><td>417-14-07644</td><td rowspan="3" style="width:60px;text-align:center">
-                  <img src="https://i.imgur.com/4i4X9qx.png" style="width:46px;height:46px">
-                </td></tr>
-                <tr><td>상호(법인명)</td><td>포레테 (대표: 이세연)</td></tr>
-                <tr><td>사업장주소</td><td>서울시 강동구 성안로 39, 103호</td></tr>
-                <tr><td>업태</td><td>서비스업</td><td rowspan="2"></td></tr>
-                <tr><td>종목</td><td>커피클래스</td></tr>
-                <tr><td>전화번호</td><td>010-3028-2705</td><td></td></tr>
-              </table>
-            </td>
-          </tr>
-        </table>
-        <p style="margin:16px 0 4px">아래와 같이 계산합니다.</p>
-        <table class="money-row" style="width:100%;border-collapse:collapse">
-          <tr><td>(공급가액+세액) 금</td><td>${total.toLocaleString()} 원</td></tr>
-        </table>
-        <table class="items-table" style="width:100%;border-collapse:collapse;margin-top:8px">
-          <thead><tr>
-            <th>품목명</th><th>규격</th><th>수량</th><th>단가</th><th>공급가액(VAT 포함)</th><th>비고</th>
-          </tr></thead>
-          <tbody>
-            <tr><td style="text-align:left;">${kind}</td><td></td><td>${qty}</td><td>${unit.toLocaleString()}</td><td>${total.toLocaleString()}</td><td>${note}</td></tr>
-            ${Array(12).fill('<tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td></tr>').join('')}
-          </tbody>
-          <tfoot><tr class="money-row"><td colspan="4">계</td><td>${total.toLocaleString()}</td><td></td></tr></tfoot>
-        </table>
-        <div class="btn-wrap">
-          <button onclick="printOrPdf()">PDF 저장 또는 인쇄하기</button>
-        </div>
-      `;
-      document.getElementById('statement').style.display = 'block';
-    });
-
-    function printOrPdf() {
-      alert('인쇄 창이 열리면 “PDF로 저장”을 선택하세요.\n(크롬 ▸ 추가설정 ▸ 배경 그래픽 체크)');
-      setTimeout(() => window.print(), 100);
-    }
-  </script>
-
+      </td>
+    </tr></table>
+    <p style="margin:16px 0 4px">아래와 같이 계산합니다.</p>
+    <table class="money-row"><tr><td>(공급가액+세액) 금</td><td>${total.toLocaleString()} 원</td></tr></table>
+    <table class="items-table" style="margin-top:8px">
+      <thead><tr><th>품목명</th><th>규격</th><th>수량</th><th>단가</th>
+        <th>공급가액(VAT 포함)</th><th>비고</th></tr></thead>
+      <tbody><tr><td style="text-align:left;">${kind}</td><td></td><td>${qty}</td>
+        <td>${unit.toLocaleString()}</td><td>${total.toLocaleString()}</td><td>${note}</td></tr>
+        ${Array(12).fill('<tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td></tr>').join('')}
+      </tbody>
+      <tfoot><tr class="money-row"><td colspan="4">계</td><td>${total.toLocaleString()}</td><td></td></tr></tfoot>
+    </table>
+    <div class="btn-wrap"><button onclick="printOrPdf()">PDF 저장 또는 인쇄하기</button></div>`;
+  document.getElementById('statement').style.display='block';
+});
+function printOrPdf(){
+  alert('인쇄 창이 열리면 “PDF로 저장”을 선택하세요.\n(크롬 ▸ 추가설정 ▸ 배경 그래픽 체크)');
+  setTimeout(()=>window.print(),100);
+}
+</script>
 </body>
 </html>
