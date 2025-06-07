@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>포레테 거래명세서</title>
+
+<!-- ===== ① 기본 UI 스타일 ===== -->
+<style>
+:root{
+  --main:#009c86;
+  --border:#000;
+  --font:Arial, "맑은 고딕", sans-serif;
+}
+*{box-sizing:border-box;font-family:var(--font);}
+body{margin:0;padding:20px;background:#f0f2f5;color:#333;line-height:1.5;}
+
+#quote-form{
+  max-width:640px;margin:40px auto;background:#fff;padding:32px;border-radius:12px;
+  box-shadow:0 8px 24px rgba(0,0,0,.08);
+}
+#quote-form h2{font-size:28px;text-align:center;margin-bottom:24px;}
+#quote-form label{display:block;margin-bottom:8px;font-weight:700;}
+#quote-form input,#quote-form select{
+  width:100%;margin-bottom:16px;padding:12px;border:1px solid #ccc;border-radius:6px;
+}
+#quote-form button{
+  width:100%;padding:14px;background:var(--main);color:#fff;font-weight:700;
+  border:none;border-radius:6px;font-size:16px;cursor:pointer;transition:.3s;
+}
+#quote-form button:hover{background:#007a6b;}
+#warning-message{display:none;color:#e00;font-size:14px;margin-bottom:16px;}
+@keyframes blink{0%{background:#ffe6e6}50%{background:#fff}100%{background:#ffe6e6}}
+input.invalid{border-color:#e00!important;animation:blink .4s ease-in-out 3}
+
+<!-- ===== ② 거래명세서 출력 영역 ===== -->
+#statement{
+  display:none;max-width:720px;margin:40px auto;background:#fff;padding:24px;border:1px solid var(--border);
+}
+#statement table{width:100%;border-collapse:collapse;font-size:14px;}
+#statement th,#statement td{border:1px solid var(--border);padding:6px 4px;text-align:center;}
+#statement .no-cell{width:60px;font-weight:700;font-size:16px;vertical-align:top;}
+#statement .title-cell{font-size:24px;font-weight:700;border-left:none;border-right:none;}
+#statement .supplier-table td{padding:4px 6px;text-align:left;font-size:12px;}
+#statement .money-row td{font-weight:700;background:#f7f7f7;}
+#statement .items-table th{background:#f7f7f7;}
+#statement .note{text-align:left;font-size:12px;border:none;padding-top:8px;}
+#statement .btn-wrap{margin-top:16px;display:flex;gap:8px;}
+#statement .btn-wrap button{
+  flex:1;padding:12px;background:var(--main);color:#fff;font-weight:700;border:none;border-radius:6px;cursor:pointer;
+}
+#statement .btn-wrap button:hover{background:#007a6b;}
+#statement .btn-wrap .pdf{background:#007bff;}
+#statement .btn-wrap .pdf:hover{background:#0056b3;}
+
+@media print{
+  html,body{background:#fff;margin:0;padding:0;overflow:visible;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  body>*:not(#statement){display:none!important;}
+  #statement{display:block!important;border:none;box-shadow:none;margin:0;padding:0;max-width:none;}
+  #statement .btn-wrap{display:none!important;}
+  @page{size:A4 portrait;margin:10mm;}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== ③ 입력 폼 ===== -->
+<form id="quote-form">
+  <h2>포레테 거래명세서</h2>
+  <label for="company">회사명</label>
+  <input id="company" name="company" required>
+  <label for="manager">담당자 이름</label>
+  <input id="manager" name="manager" required>
+  <label for="class-kind">클래스 종류</label>
+  <select id="class-kind" name="classKind" required>
+    <option value="핸드드립 클래스">핸드드립 클래스</option>
+    <option value="드립백 클래스">드립백 클래스</option>
+  </select>
+  <label for="class-type">클래스 인원</label>
+  <select id="class-type" name="type" required>
+    <option value="15인 이하">15인 이하</option>
+    <option value="16~40인">16~40인</option>
+    <option value="41~100인">41~100인</option>
+  </select>
+  <label for="quantity-input">인원 수</label>
+  <input type="number" id="quantity-input" name="quantity" min="1" required>
+  <p id="warning-message">⚠ 클래스 유형에 맞는 인원 수를 입력해 주세요.</p>
+  <button type="submit">거래명세서 보기</button>
+</form>
+
+<!-- ===== ④ 거래명세서 출력 ===== -->
+<div id="statement"></div>
+
+<!-- ===== ⑤ 스크립트 ===== -->
+<script>
+const form=document.getElementById('quote-form');
+form.addEventListener('submit',e=>{
+  e.preventDefault();
+  const company=form.company.value.trim();
+  const manager=form.manager.value.trim();
+  const classKind=form.classKind.value;
+  const type=form.type.value;
+  const qtyInput=document.getElementById('quantity-input');
+  const qty=parseInt(qtyInput.value,10);
+  const warn=document.getElementById('warning-message');
+
+  /* 단가 & 허용인원 */
+  let unit=0,min=1,max=999;
+  if(type==="15인 이하"){unit=50000;max=15;}
+  else if(type==="16~40인"){unit=40000;min=16;max=40;}
+  else{unit=30000;min=41;max=100;}
+
+  if(qty<min||qty>max){
+    qtyInput.classList.add('invalid');warn.style.display='block';return;
+  }else{qtyInput.classList.remove('invalid');warn.style.display='none';}
+
+  const total=unit*qty;
+  const today=new Date();
+  const dateStr=`${today.getFullYear()}년 ${today.getMonth()+1}월 ${today.getDate()}일`;
+
+  /* 거래명세서 HTML 생성 */
+  const itemRow=`<tr>
+      <td>${classKind}_${manager}</td>
+      <td></td>
+      <td>${qty}</td>
+      <td>${unit.toLocaleString()}</td>
+      <td>${total.toLocaleString()}</td>
+      <td></td>
+    </tr>`;
+  let blankRows='';
+  for(let i=0;i<12;i++){blankRows+=`<tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td></tr>`;}
+
+  document.getElementById('statement').innerHTML=`
+  <table>
+    <tr>
+      <td class="no-cell" rowspan="2">NO.<br>1</td>
+      <td class="title-cell" colspan="5">거 래 명 세 서</td>
+    </tr>
+    <tr>
+      <td colspan="5" style="text-align:right;border-top:none;">${dateStr}</td>
+    </tr>
+  </table>
+
+  <table class="supplier-table" style="margin-top:4px">
+    <tr><td>등록번호</td><td>417-14-07644</td><td rowspan="3" style="width:60px;text-align:center">
+        <img src="https://i.imgur.com/4i4X9qx.png" alt="직인" style="width:46px;height:46px"></td></tr>
+    <tr><td>상호(법인명)</td><td>포레테 (대표: 이세연)</td></tr>
+    <tr><td>사업장주소</td><td>서울시 강동구 성안로 39, 103호</td></tr>
+    <tr><td>업태</td><td>서비스업</td><td rowspan="2"></td></tr>
+    <tr><td>종목</td><td>커피클래스</td></tr>
+    <tr><td>전화번호</td><td>010-3028-2705</td><td></td></tr>
+  </table>
+
+  <p style="margin:8px 0 4px;">아래와 같이 계산합니다.</p>
+
+  <table class="money-row">
+    <tr><td style="width:20%">(공급가액+세액) 금</td><td>${total.toLocaleString()} 원</td></tr>
+  </table>
+
+  <table class="items-table" style="margin-top:4px">
+    <thead>
+      <tr>
+        <th>품목명</th><th>규격</th><th>수량</th><th>단가</th><th>공급가액(VAT 포함)</th><th>비고</th>
+      </tr>
+    </thead>
+    <tbody>${itemRow}${blankRows}</tbody>
+    <tfoot>
+      <tr class="money-row"><td colspan="4">계</td><td>${total.toLocaleString()}</td><td></td></tr>
+    </tfoot>
+  </table>
+
+  <table><tr><td class="note">※ 신용카드 결제건</td></tr></table>
+
+  <div class="btn-wrap">
+    <button onclick="printPage()">인쇄하기</button>
+    <button class="pdf" onclick="downloadPdf()">PDF 다운로드하기</button>
+  </div>
+  `;
+
+  document.getElementById('statement').style.display='block';
+  window.scrollTo({top:document.getElementById('statement').offsetTop,behavior:'smooth'});
+});
+
+/* 인쇄 & PDF (브라우저 내장기능 활용) */
+function printPage(){setTimeout(()=>window.print(),100);}
+function downloadPdf(){
+  alert('인쇄 창이 열리면 “PDF로 저장”을 선택하세요.\n(크롬 ▸ 추가설정 ▸ 배경 그래픽 체크)');
+  setTimeout(()=>window.print(),100);
+}
+</script>
+</body>
+</html>
