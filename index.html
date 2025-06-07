@@ -5,74 +5,175 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <title>포레테 거래명세서</title>
   <style>
-    :root { --main:#009c86; --border:#000; --font:Arial,"맑은 고딸고딕",sans-serif; }
-    * { box-sizing:border-box; font-family:var(--font); }
-    body { margin:0; padding:20px; background:#f0f2f5; color:#333; line-height:1.5; }
+    :root {
+      --main: #009c86;
+      --border: #000;
+      --font: Arial, "맑은 고딕", sans-serif;
+    }
+    * { box-sizing: border-box; font-family: var(--font); }
+    body { margin: 0; padding: 20px; background: #f0f2f5; color: #333; line-height: 1.5; }
 
     /* — 입력 폼 — */
     #quote-form {
-      max-width:640px; margin:40px auto; background:#fff; padding:32px; border-radius:12px;
-      box-shadow:0 8px 24px rgba(0,0,0,.08);
+      max-width: 640px;
+      margin: 40px auto;
+      background: #fff;
+      padding: 32px;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.08);
     }
-    #quote-form h2, #quote-form label { color:#000; }
-    #quote-form h2 { font-size:28px; text-align:center; margin-bottom:24px; }
-    #quote-form label { display:block; margin-bottom:8px; font-weight:bold; }
-    #quote-form input, #quote-form select {
-      width:100%; margin-bottom:16px; padding:12px; border:1px solid #ccc; border-radius:6px;
+    #quote-form h2,
+    #quote-form label {
+      color: #000;
+    }
+    #quote-form h2 {
+      font-size: 28px;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    #quote-form label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+    #quote-form input,
+    #quote-form select {
+      width: 100%;
+      margin-bottom: 16px;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
     }
     #quote-form button {
-      width:100%; padding:14px; background:var(--main); color:#fff;
-      font-weight:bold; border:none; border-radius:6px; font-size:16px;
-      cursor:pointer; transition:background .3s;
+      width: 100%;
+      padding: 14px;
+      background: var(--main);
+      color: #fff;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background .3s;
     }
-    #quote-form button:hover { background:#007a6b; }
-    #warning-message { display:none; color:#e00; font-size:14px; margin-bottom:16px; }
-    @keyframes blink { 0%{background:#ffe6e6}50%{background:#fff}100%{background:#ffe6e6} }
-    input.invalid { border-color:#e00!important; animation:blink .4s ease-in-out 3; }
+    #quote-form button:hover {
+      background: #007a6b;
+    }
+    #warning-message {
+      display: none;
+      color: #e00;
+      font-size: 14px;
+      margin-bottom: 16px;
+    }
+    @keyframes blink {
+      0% { background: #ffe6e6 }
+      50% { background: #fff }
+      100% { background: #ffe6e6 }
+    }
+    input.invalid {
+      border-color: #e00 !important;
+      animation: blink .4s ease-in-out 3;
+    }
 
     /* — 거래명세서 출력 — */
     #statement {
-      display:none; max-width:720px; margin:40px auto; background:#fff; padding:24px;
-      border:1px solid var(--border); box-shadow:0 8px 24px rgba(0,0,0,.08);
-      color:#000 !important;   /* 전체 텍스트 검정 고정 */
+      display: none;
+      max-width: 720px;
+      margin: 40px auto;
+      background: #fff;
+      padding: 24px;
+      /* 테두리 및 그림자 제거 */
+      border: none !important;
+      box-shadow: none !important;
+      color: #000 !important;
     }
-    #statement table { width:100%; border-collapse:collapse; font-size:14px; color:#000 !important; }
+    #statement table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      color: #000 !important;
+    }
     #statement th, #statement td {
-      border:1px solid var(--border); padding:6px 4px; text-align:center;
-      color:#000 !important;
+      border: 1px solid var(--border);
+      padding: 6px 4px;
+      text-align: center;
+      color: #000 !important;
     }
-    #statement .no-cell { width:60px; font-weight:bold; font-size:16px; vertical-align:top; }
+    #statement .no-cell {
+      width: 60px;
+      font-weight: bold;
+      font-size: 16px;
+      vertical-align: top;
+    }
     #statement .title-cell {
-      font-size:24px; font-weight:bold; border-left:none; border-right:none;
+      font-size: 24px;
+      font-weight: bold;
+      border-left: none;
+      border-right: none;
     }
     #statement .supplier-table td {
-      padding:4px 6px; text-align:left; font-size:12px; color:#000 !important;
+      padding: 4px 6px;
+      text-align: left;
+      font-size: 12px;
+      color: #000 !important;
     }
-    #statement .money-row td { font-weight:bold; background:#f7f7f7; color:#000 !important; }
-    #statement .items-table th { background:#f7f7f7; color:#000 !important; }
+    #statement .money-row td {
+      font-weight: bold;
+      background: #f7f7f7;
+      color: #000 !important;
+    }
+    #statement .items-table th {
+      background: #f7f7f7;
+      color: #000 !important;
+    }
     #statement .note {
-      text-align:left; font-size:12px; border:none; padding-top:8px; color:#000 !important;
+      text-align: left;
+      font-size: 12px;
+      border: none;
+      padding-top: 8px;
+      color: #000 !important;
     }
-    .btn-wrap { margin-top:16px; }
+    .btn-wrap {
+      margin-top: 16px;
+    }
     .btn-wrap button {
-      width:100%; padding:12px; background:var(--main); color:#fff;
-      font-weight:bold; border:none; border-radius:6px; font-size:16px;
-      cursor:pointer; transition:background .3s;
+      width: 100%;
+      padding: 12px;
+      background: var(--main);
+      color: #fff;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background .3s;
     }
-    .btn-wrap button:hover { background:#007a6b; }
+    .btn-wrap button:hover {
+      background: #007a6b;
+    }
 
     /* — 인쇄용 CSS — */
     @media print {
-      html,body {
-        margin:0; padding:0; background:#fff!important; print-color-adjust:exact;
+      html, body {
+        margin: 0; padding: 0;
+        background: #fff !important;
+        print-color-adjust: exact;
       }
-      body > *:not(#statement) { display:none!important; }
+      body > *:not(#statement) {
+        display: none !important;
+      }
       #statement {
-        display:block!important; position:absolute; top:0; left:0;
-        width:100%; margin:0; padding:0; border:none; box-shadow:none; max-width:none;
+        display: block !important;
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%; margin: 0; padding: 0;
+        border: none !important;
+        box-shadow: none !important;
       }
-      .btn-wrap { display:none!important; }
-      @page { size:A4 portrait; margin:10mm; }
+      .btn-wrap {
+        display: none !important;
+      }
+      @page { size: A4 portrait; margin: 10mm; }
     }
   </style>
 </head>
@@ -121,7 +222,7 @@
   <div id="statement"></div>
 
   <script>
-    document.getElementById('quote-form').addEventListener('submit', e => {
+    document.getElementById('quote-form').addEventListener('submit', function(e) {
       e.preventDefault();
       const f = e.target;
       const company = f.company.value.trim();
@@ -188,9 +289,7 @@
             <th>품목명</th><th>규격</th><th>수량</th><th>단가</th><th>공급가액(VAT 포함)</th><th>비고</th>
           </tr></thead>
           <tbody>
-            <tr>
-              <td style="text-align:left;">${kind}</td><td></td><td>${qty}</td><td>${unit.toLocaleString()}</td><td>${total.toLocaleString()}</td><td>${note}</td>
-            </tr>
+            <tr><td style="text-align:left;">${kind}</td><td></td><td>${qty}</td><td>${unit.toLocaleString()}</td><td>${total.toLocaleString()}</td><td>${note}</td></tr>
             ${Array(12).fill('<tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td></tr>').join('')}
           </tbody>
           <tfoot><tr class="money-row"><td colspan="4">계</td><td>${total.toLocaleString()}</td><td></td></tr></tfoot>
