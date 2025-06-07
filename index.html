@@ -6,57 +6,38 @@
 <title>포레테 거래명세서</title>
 
 <style>
-/* 0. 아임웹 위젯 래퍼 초기화 */
+/* 위젯 외곽선 제거 */
 .widget-code, .widget-code *,
-.iw-code,    .iw-code *,
+.iw-code, .iw-code *,
 .iw_component, .iw_component *,
-.iw_inner,   .iw_inner *{
-  border:none !important;
-  box-shadow:none !important;
-}
+.iw_inner, .iw_inner *{border:none!important;box-shadow:none!important;}
 
-/* 1. 공통 */
 :root{--main:#009c86;--border:#000;--font:Arial,"맑은 고딕",sans-serif;}
 *{box-sizing:border-box;font-family:var(--font);}
-body{margin:0;padding:20px;background:transparent!important;color:#333;line-height:1.5;}
+body{margin:0;padding:20px;background:transparent!important;color:#333;}
 
-/* 2. 입력 폼 */
-#quote-form{
-  max-width:640px;margin:40px auto;background:#fff;padding:32px;border-radius:12px;
-  border:none!important;box-shadow:none!important;
-}
-#quote-form h2{color:#000;font-size:28px;text-align:center;margin-bottom:24px;}
+#quote-form{max-width:640px;margin:40px auto;background:#fff;padding:32px;border-radius:12px;}
+#quote-form h2{margin-bottom:24px;text-align:center;font-size:28px;color:#000;}
 #quote-form label{display:block;margin-bottom:8px;font-weight:bold;color:#000;}
-#quote-form input,#quote-form select{
-  width:100%;margin-bottom:16px;padding:12px;border:1px solid #ccc;border-radius:6px;
-}
-#quote-form button{
-  width:100%;padding:14px;background:var(--main);color:#fff;font-weight:bold;border:none;
-  border-radius:6px;font-size:16px;cursor:pointer;transition:background .3s;
-}
+#quote-form input,#quote-form select{width:100%;margin-bottom:16px;padding:12px;border:1px solid #ccc;border-radius:6px;}
+#quote-form button{width:100%;padding:14px;background:var(--main);color:#fff;font-weight:bold;border:none;border-radius:6px;font-size:16px;cursor:pointer;}
 #quote-form button:hover{background:#007a6b;}
 #warning-message{display:none;color:#e00;font-size:14px;margin-bottom:16px;}
 @keyframes blink{0%{background:#ffe6e6}50%{background:#fff}100%{background:#ffe6e6}}
 input.invalid{border-color:#e00!important;animation:blink .4s ease-in-out 3}
 
-/* 3. 출력 */
-#statement{
-  display:none;max-width:720px;margin:40px auto;background:#fff;padding:24px;
-  border:none!important;box-shadow:none!important;color:#000!important;
-}
-#statement table{width:100%;border-collapse:collapse;font-size:14px;color:#000!important;}
-#statement th,#statement td{border:1px solid var(--border);padding:6px 4px;text-align:center;color:#000!important;}
-#statement .no-cell{width:60px;font-weight:bold;font-size:16px;vertical-align:top;}
-#statement .title-cell{font-size:24px;font-weight:bold;border-left:none;border-right:none;}
-#statement .supplier-table td{padding:4px 6px;text-align:left;font-size:12px;color:#000!important;}
-#statement .money-row td{font-weight:bold;background:#f7f7f7;color:#000!important;}
-#statement .items-table th{background:#f7f7f7;color:#000!important;}
+#statement{display:none;max-width:720px;margin:40px auto;background:#fff;padding:24px;color:#000;}
+#statement table{width:100%;border-collapse:collapse;font-size:14px;}
+#statement th,#statement td{border:1px solid var(--border);padding:6px 4px;text-align:center;}
+#statement .no-cell{width:60px;font-weight:700;font-size:16px;vertical-align:top;}
+#statement .title-cell{font-size:24px;font-weight:700;border-left:none;border-right:none;}
+#statement .supplier-table td{padding:4px 6px;text-align:left;font-size:12px;}
+#statement .money-row td{font-weight:700;background:#f7f7f7;}
+#statement .items-table th{background:#f7f7f7;}
 .btn-wrap{margin-top:16px;}
-.btn-wrap button{width:100%;padding:12px;background:var(--main);color:#fff;font-weight:bold;border:none;
-  border-radius:6px;font-size:16px;cursor:pointer;transition:background .3s;}
+.btn-wrap button{width:100%;padding:12px;background:var(--main);color:#fff;font-weight:bold;border:none;border-radius:6px;font-size:16px;cursor:pointer;}
 .btn-wrap button:hover{background:#007a6b;}
 
-/* 4. 인쇄 */
 @media print{
   html,body{margin:0;padding:0;background:#fff!important;print-color-adjust:exact;}
   body>*:not(#statement){display:none!important;}
@@ -68,86 +49,55 @@ input.invalid{border-color:#e00!important;animation:blink .4s ease-in-out 3}
 </head>
 <body>
 
-<!-- 입력 폼 -->
 <form id="quote-form">
   <h2>포레테 거래명세서</h2>
 
-  <label>회사명
-    <input type="text" name="company" required>
-  </label>
-
+  <label>회사명<input type="text" name="company" required></label>
   <label>클래스 종류
     <select name="classKind" required>
-      <option>핸드드립 클래스</option>
-      <option>드립백 클래스</option>
+      <option>핸드드립 클래스</option><option>드립백 클래스</option>
     </select>
   </label>
-
   <label>클래스 인원
     <select name="type" required>
-      <option>15인 이하</option>
-      <option>16~40인</option>
-      <option>41~100인</option>
+      <option>15인 이하</option><option>16~40인</option><option>41~100인</option>
     </select>
   </label>
-
-  <label>인원 수
-    <input type="number" name="quantity" min="1" required>
-  </label>
-
+  <label>인원 수<input type="number" name="quantity" min="1" required></label>
   <label>결제 방식
     <select name="noteType" required>
       <option value="신용카드 결제건">신용카드 결제건</option>
       <option value="전자세금계산서 발행">전자세금계산서 발행</option>
     </select>
   </label>
-
   <p id="warning-message">⚠ 클래스 유형에 맞는 인원 수를 입력해 주세요.</p>
-
   <button type="submit">거래명세서 보기</button>
 </form>
 
-<!-- 출력 -->
 <div id="statement"></div>
 
 <script>
 document.getElementById('quote-form').addEventListener('submit',function(e){
   e.preventDefault();
-  const f=e.target;
-  const company=f.company.value.trim();
-  const kind=f.classKind.value;
-  const type=f.type.value;
-  const qty=parseInt(f.quantity.value,10);
-  const note=f.noteType.value;
-  const warn=document.getElementById('warning-message');
-
+  const f=e.target, qty=parseInt(f.quantity.value,10), warn=document.getElementById('warning-message');
   let unit=0,min=1,max=Infinity;
-  if(type==='15인 이하'){unit=50000;max=15;}
-  else if(type==='16~40인'){unit=40000;min=16;max=40;}
+  if(f.type.value==='15인 이하'){unit=50000;max=15;}
+  else if(f.type.value==='16~40인'){unit=40000;min=16;max=40;}
   else{unit=30000;min=41;max=100;}
-
-  if(qty<min||qty>max){
-    f.quantity.classList.add('invalid');warn.style.display='block';return;
-  }
+  if(qty<min||qty>max){f.quantity.classList.add('invalid');warn.style.display='block';return;}
   f.quantity.classList.remove('invalid');warn.style.display='none';
-
-  const total=unit*qty;
-  const d=new Date();
-  const dateStr=`${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일`;
-
+  const total=unit*qty, d=new Date(), date=`${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일`;
   document.getElementById('statement').innerHTML=`
     <table><tr><td class="no-cell" rowspan="2">NO.<br>1</td>
       <td class="title-cell" colspan="5">거 래 명 세 서</td></tr></table>
-
     <table style="margin-top:8px"><tr>
       <td style="width:50%;border:none;text-align:left;padding:4px 8px;border-bottom:1px solid var(--border);">
-        ${dateStr}<br><br><strong>${company}</strong> 귀하
+        ${date}<br><br><strong>${f.company.value.trim()}</strong> 귀하
       </td>
       <td style="width:50%;border:none;padding:0;vertical-align:top;">
         <table class="supplier-table">
           <tr><td>등록번호</td><td>417-14-07644</td>
             <td rowspan="3" style="width:60px;text-align:center">
-              <!-- ▼ 직인 PNG (jsDelivr CDN) -->
               <img src="https://cdn.jsdelivr.net/gh/seyeon97/statement@main/seal.png"
                    alt="직인" style="width:46px;height:46px">
             </td></tr>
@@ -159,32 +109,17 @@ document.getElementById('quote-form').addEventListener('submit',function(e){
         </table>
       </td>
     </tr></table>
-
     <p style="margin:16px 0 4px">아래와 같이 계산합니다.</p>
-
     <table class="money-row"><tr><td>(공급가액+세액) 금</td><td>${total.toLocaleString()} 원</td></tr></table>
-
     <table class="items-table" style="margin-top:8px">
-      <thead><tr>
-        <th>품목명</th><th>규격</th><th>수량</th><th>단가</th>
-        <th>공급가액(VAT 포함)</th><th>비고</th>
-      </tr></thead>
-      <tbody>
-        <tr><td style="text-align:left;">${kind}</td><td></td><td>${qty}</td>
-            <td>${unit.toLocaleString()}</td><td>${total.toLocaleString()}</td><td>${note}</td></tr>
+      <thead><tr><th>품목명</th><th>규격</th><th>수량</th><th>단가</th><th>공급가액(VAT 포함)</th><th>비고</th></tr></thead>
+      <tbody><tr><td style="text-align:left;">${f.classKind.value}</td><td></td><td>${qty}</td><td>${unit.toLocaleString()}</td><td>${total.toLocaleString()}</td><td>${f.noteType.value}</td></tr>
         ${Array(12).fill('<tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td></tr>').join('')}
-      </tbody>
-      <tfoot><tr class="money-row"><td colspan="4">계</td><td>${total.toLocaleString()}</td><td></td></tr></tfoot>
+      </tbody><tfoot><tr class="money-row"><td colspan="4">계</td><td>${total.toLocaleString()}</td><td></td></tr></tfoot>
     </table>
-
-    <div class="btn-wrap"><button onclick="printOrPdf()">PDF 저장 또는 인쇄하기</button></div>`;
+    <div class="btn-wrap"><button onclick="window.print()">PDF 저장 또는 인쇄하기</button></div>`;
   document.getElementById('statement').style.display='block';
 });
-
-function printOrPdf(){
-  alert('인쇄 창이 열리면 “PDF로 저장”을 선택하세요.\n(크롬 ▸ 추가설정 ▸ 배경 그래픽 체크)');
-  setTimeout(()=>window.print(),100);
-}
 </script>
 
 </body>
