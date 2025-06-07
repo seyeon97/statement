@@ -10,40 +10,175 @@
 .widget-code, .widget-code *,
 .iw-code, .iw-code *,
 .iw_component, .iw_component *,
-.iw_inner, .iw_inner *{border:none!important;box-shadow:none!important;}
+.iw_inner, .iw_inner * {
+  border: none!important;
+  box-shadow: none!important;
+}
 
-:root{--main:#F23030;--border:#000;--font:Arial,"맑은 고딕",sans-serif;}
-*{box-sizing:border-box;font-family:var(--font);}
-body{margin:0;padding:20px;background:transparent!important;color:#333;}
+/* 버튼 색상 변경 */
+:root {
+  --main: #F23030;
+  --border: #000;
+  --font: Arial,"맑은 고딕",sans-serif;
+}
 
-#quote-form{max-width:640px;margin:40px auto;background:#fff;padding:32px;border-radius:12px;}
-#quote-form h2{margin-bottom:24px;text-align:center;font-size:28px;color:#000;}
-#quote-form label{display:block;margin-bottom:8px;font-weight:bold;color:#000;}
-#quote-form input,#quote-form select{width:100%;margin-bottom:16px;padding:12px;border:1px solid #ccc;border-radius:6px;}
-#quote-form button{width:100%;padding:14px;background:var(--main);color:#fff;font-weight:bold;border:none;border-radius:6px;font-size:16px;cursor:pointer;}
-#quote-form button:hover{background:#007a6b;}
-#warning-message{display:none;color:#e00;font-size:14px;margin-bottom:16px;}
-@keyframes blink{0%{background:#ffe6e6}50%{background:#fff}100%{background:#ffe6e6}}
-input.invalid{border-color:#e00!important;animation:blink .4s ease-in-out 3}
+* {
+  box-sizing: border-box;
+  font-family: var(--font);
+}
+body {
+  margin: 0;
+  padding: 20px;
+  background: transparent!important;
+  color: #333;
+}
 
-#statement{display:none;max-width:720px;margin:40px auto;background:#fff;padding:24px;color:#000;}
-#statement table{width:100%;border-collapse:collapse;font-size:14px;}
-#statement th,#statement td{border:1px solid var(--border);padding:6px 4px;text-align:center;}
-#statement .no-cell{width:60px;font-weight:700;font-size:16px;vertical-align:top;}
-#statement .title-cell{font-size:24px;font-weight:700;border-left:none;border-right:none;}
-#statement .supplier-table td{padding:4px 6px;text-align:left;font-size:12px;}
-#statement .money-row td{font-weight:700;background:#f7f7f7;}
-#statement .items-table th{background:#f7f7f7;}
-.btn-wrap{margin-top:16px;}
-.btn-wrap button{width:100%;padding:12px;background:var(--main);color:#fff;font-weight:bold;border:none;border-radius:6px;font-size:16px;cursor:pointer;}
-.btn-wrap button:hover{background:#007a6b;}
+#quote-form {
+  max-width: 640px;
+  margin: 40px auto;
+  background: #fff;
+  padding: 32px;
+  border-radius: 12px;
+}
+#quote-form h2 {
+  margin-bottom: 24px;
+  text-align: center;
+  font-size: 28px;
+  color: #000;
+}
+#quote-form label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: #000;
+}
+#quote-form input,
+#quote-form select {
+  width: 100%;
+  margin-bottom: 16px;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+#quote-form button {
+  width: 100%;
+  padding: 14px;
+  background: var(--main);
+  color: #fff;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+}
+#quote-form button:hover {
+  background: #D12728;
+}
 
-@media print{
-  html,body{margin:0;padding:0;background:#fff!important;print-color-adjust:exact;}
-  body>*:not(#statement){display:none!important;}
-  #statement{display:block!important;position:absolute;top:0;left:0;width:100%;margin:0;padding:0;}
-  .btn-wrap{display:none!important;}
-  @page{size:A4 portrait;margin:10mm;}
+#warning-message {
+  display: none;
+  color: #e00;
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+@keyframes blink {
+  0% { background: #ffe6e6 }
+  50% { background: #fff }
+  100% { background: #ffe6e6 }
+}
+input.invalid {
+  border-color: #e00!important;
+  animation: blink .4s ease-in-out 3;
+}
+
+#statement {
+  display: none;
+  max-width: 720px;
+  margin: 40px auto;
+  background: #fff;
+  padding: 24px;
+  color: #000;
+}
+#statement table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+#statement th,
+#statement td {
+  border: 1px solid var(--border);
+  padding: 6px 4px;
+  text-align: center;
+}
+#statement .no-cell {
+  width: 60px;
+  font-weight: 700;
+  font-size: 16px;
+  vertical-align: top;
+}
+#statement .title-cell {
+  font-size: 24px;
+  font-weight: 700;
+  border-left: none;
+  border-right: none;
+}
+#statement .supplier-table td {
+  padding: 4px 6px;
+  text-align: left;
+  font-size: 12px;
+}
+#statement .money-row td {
+  font-weight: 700;
+  background: #f7f7f7;
+}
+#statement .items-table th {
+  background: #f7f7f7;
+}
+
+.btn-wrap {
+  margin-top: 16px;
+}
+.btn-wrap button {
+  width: 100%;
+  padding: 12px;
+  background: var(--main);
+  color: #fff;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+}
+.btn-wrap button:hover {
+  background: #D12728;
+}
+
+@media print {
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: #fff!important;
+    print-color-adjust: exact;
+  }
+  body > *:not(#statement) {
+    display: none!important;
+  }
+  #statement {
+    display: block!important;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+  .btn-wrap {
+    display: none!important;
+  }
+  @page {
+    size: A4 portrait;
+    margin: 10mm;
+  }
 }
 </style>
 </head>
@@ -55,12 +190,15 @@ input.invalid{border-color:#e00!important;animation:blink .4s ease-in-out 3}
   <label>회사명<input type="text" name="company" required></label>
   <label>클래스 종류
     <select name="classKind" required>
-      <option>핸드드립 클래스</option><option>드립백 클래스</option>
+      <option>핸드드립 클래스</option>
+      <option>드립백 클래스</option>
     </select>
   </label>
   <label>클래스 인원
     <select name="type" required>
-      <option>15인 이하</option><option>16~40인</option><option>41~100인</option>
+      <option>15인 이하</option>
+      <option>16~40인</option>
+      <option>41~100인</option>
     </select>
   </label>
   <label>인원 수<input type="number" name="quantity" min="1" required></label>
@@ -77,17 +215,28 @@ input.invalid{border-color:#e00!important;animation:blink .4s ease-in-out 3}
 <div id="statement"></div>
 
 <script>
-document.getElementById('quote-form').addEventListener('submit',function(e){
+document.getElementById('quote-form').addEventListener('submit', function(e){
   e.preventDefault();
-  const f=e.target, qty=parseInt(f.quantity.value,10), warn=document.getElementById('warning-message');
-  let unit=0,min=1,max=Infinity;
-  if(f.type.value==='15인 이하'){unit=50000;max=15;}
-  else if(f.type.value==='16~40인'){unit=40000;min=16;max=40;}
-  else{unit=30000;min=41;max=100;}
-  if(qty<min||qty>max){f.quantity.classList.add('invalid');warn.style.display='block';return;}
-  f.quantity.classList.remove('invalid');warn.style.display='none';
-  const total=unit*qty, d=new Date(), date=`${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일`;
-  document.getElementById('statement').innerHTML=`
+  const f = e.target,
+        qty = parseInt(f.quantity.value, 10),
+        warn = document.getElementById('warning-message');
+  let unit = 0, min = 1, max = Infinity;
+  if (f.type.value === '15인 이하') { unit = 50000; max = 15; }
+  else if (f.type.value === '16~40인') { unit = 40000; min = 16; max = 40; }
+  else { unit = 30000; min = 41; max = 100; }
+  if (qty < min || qty > max) {
+    f.quantity.classList.add('invalid');
+    warn.style.display = 'block';
+    return;
+  }
+  f.quantity.classList.remove('invalid');
+  warn.style.display = 'none';
+
+  const total = unit * qty,
+        d = new Date(),
+        date = `${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일`;
+
+  document.getElementById('statement').innerHTML = `
     <table><tr><td class="no-cell" rowspan="2">NO.<br>1</td>
       <td class="title-cell" colspan="5">거 래 명 세 서</td></tr></table>
     <table style="margin-top:8px"><tr>
@@ -118,7 +267,7 @@ document.getElementById('quote-form').addEventListener('submit',function(e){
       </tbody><tfoot><tr class="money-row"><td colspan="4">계</td><td>${total.toLocaleString()}</td><td></td></tr></tfoot>
     </table>
     <div class="btn-wrap"><button onclick="window.print()">PDF 저장 또는 인쇄하기</button></div>`;
-  document.getElementById('statement').style.display='block';
+  document.getElementById('statement').style.display = 'block';
 });
 </script>
 
