@@ -197,8 +197,8 @@ input.invalid {
   <label>클래스 인원
     <select name="type" required>
       <option>15인 이하</option>
-      <option>16~40인</option>
-      <option>41~100인</option>
+      <option>16~50인</option>
+      <option>51인 이상</option>
     </select>
   </label>
   <label>인원 수<input type="number" name="quantity" min="1" required></label>
@@ -222,8 +222,8 @@ document.getElementById('quote-form').addEventListener('submit', function(e){
         warn = document.getElementById('warning-message');
   let unit = 0, min = 1, max = Infinity;
   if (f.type.value === '15인 이하') { unit = 50000; max = 15; }
-  else if (f.type.value === '16~40인') { unit = 40000; min = 16; max = 40; }
-  else { unit = 30000; min = 41; max = 100; }
+  else if (f.type.value === '16~40인') { unit = 45000; min = 16; max = 50; }
+  else { unit = 35000; min = 51; max = 150; }
   if (qty < min || qty > max) {
     f.quantity.classList.add('invalid');
     warn.style.display = 'block';
